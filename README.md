@@ -22,7 +22,8 @@ Reemplaza `XXXXXXXXXXXXXXXXXX` por el **Client ID** del Discord Bot.
 - Abrir `cmd.exe` en Windows.
 - Ejecutar `cd\` para ir a la raíz del disco local.
 - Ejecutar para ir al directorio donde están los archivos del Discord Bot. Ejemplo `cd %USERPROFILE%\Documents\DiscordBot`
-- Ejecutar `npm install ffmpeg --save` para instalar la librería ffmpeg.
+- Ejecutar `npm install --save` para instalar dependencies.
+- Ejecutar `npm install ffmpeg-binaries --save` para instalar la librería ffmpeg.
 - Ejecutar `node index.js` para activar el Discord Bot.
 
 ## Requerimientos para instalar en Heroku (Windows)
