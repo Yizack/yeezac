@@ -14,8 +14,10 @@ Reemplaza `XXXXXXXXXXXXXXXXXX` por el **Client ID** del Discord Bot.
   - `botid` Reemplazar `id del bot` con el id del Discord Bot.
   - `prefix` Reemplazar `y!` con el prefijo que desees para ejecutar un comando en Discord.
   - `yt_api_key` Reemplazar `api key de youtube` con la api key de Youtube.
+##
 
-## Requerimientos para instalar en una PC local (Windows)
+## Opción 1. Instalar en una PC local (Windows)
+### Requerimientos
 - Descargar e Instalar [Node.js](https://nodejs.org/)
 
 ### Configurar
@@ -25,8 +27,10 @@ Reemplaza `XXXXXXXXXXXXXXXXXX` por el **Client ID** del Discord Bot.
 - Ejecutar `npm install --save` para instalar dependencies.
 - Ejecutar `npm install ffmpeg-binaries --save` para instalar la librería ffmpeg.
 - Ejecutar `node index.js` para activar el Discord Bot.
+##
 
-## Requerimientos para instalar en Heroku (Windows)
+## Opción 2. Instalar en Heroku (Windows)
+### Requerimientos
 - Registro en [Heroku](https://heroku.com/)
 - Crear [Heroku App](https://dashboard.heroku.com/new-app)
 - Descargar e Instalar [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
@@ -47,6 +51,7 @@ Reemplaza `XXXXXXXXXXXXXXXXXX` por el **Client ID** del Discord Bot.
 - Ejecutar `git commit -am "make it better"` para guardar los cambios
 - Ejecutar `git push heroku master` subir los archivos a Heroku.
 - Ejecutar `heroku ps:scale worker=1` para activar el Discord Bot 24/7.
+##
 
 ## Uso
 | Comando | Descripción
@@ -56,6 +61,7 @@ Reemplaza `XXXXXXXXXXXXXXXXXX` por el **Client ID** del Discord Bot.
 | `y!skip` | Salta la canción que se está reproduciendo. |
 | `y!comandos` | Muestra la lista de comandos. |
 | `y!salir` | El Discord Bot sale de el canal de voz. |
+##
 
 ## Sugerencias, preguntas o problemas
 Si tienes sugerencias, preguntas o algún problema, no dudes en escribeme en [@Yizack](https://github.com/Yizack/yeezac/issues/new).
