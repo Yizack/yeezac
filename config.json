@@ -1,0 +1,6 @@
+{
+  "discord_token": "bot token",
+  "botid": "id del bot",
+  "prefix": "y!",
+  "yt_api_key": "api key de youtube"
+}
