@@ -19,104 +19,109 @@ client.on('message', function(message) {
     const member = message.member;
     const mess = message.content.toLowerCase();
     const args = message.content.split(' ').slice(1).join(" ");
+	if(message.channel.type !== "dm"){
+		if (!guilds[message.guild.id]) {
+			guilds[message.guild.id] = {
+				queue: [],
+				queueNames: [],
+				isPlaying: false,
+				dispatcher: null,
+				voiceChannel: null,
+				skipReq: 0,
+				skippers: [],
+			};
+		}
 
-    if (!guilds[message.guild.id]) {
-        guilds[message.guild.id] = {
-            queue: [],
-            queueNames: [],
-            isPlaying: false,
-            dispatcher: null,
-            voiceChannel: null,
-            skipReq: 0,
-            skippers: [],
-        };
-    }
-
-    if (mess.startsWith(prefix + "play")) {
-        if (message.member.voiceChannel) {
-			if(mess === (prefix + "play")){
-				message.reply("No escribiste el nombre de ninguna canción.");
-			}		
-			else{
-				if (guilds[message.guild.id].queue.length > 0 || guilds[message.guild.id].isPlaying) {
-					getID(args, function(id) {
-						add_to_queue(id, message);
-						fetchVideoInfo(id, function(err, videoInfo) {
-							if (err) throw new Error(err);
-							message.reply("📢 Has añadido una canción a la cola: ```🎵: " + videoInfo.title + "\n⏲️: [" + duracion(videoInfo.duration) +  "]\n📽️: " + videoInfo.url + "```");
-							guilds[message.guild.id].queueNames.push(videoInfo.title + ", ⏲️: [" + duracion(videoInfo.duration) + "]");
-						});
-					});
-				} else {
-					isPlaying = true;
-					getID(args, function(id) {
-						guilds[message.guild.id].queue.push(id);
-						fetchVideoInfo(id, function(err, videoInfo) {
-							if (err) throw new Error(err);
-							guilds[message.guild.id].queueNames.push(videoInfo.title + ", ⏱️: [" + duracion(videoInfo.duration) + "]");
-						});
-						playMusic(id, message);
-					});
-				}
-			}
-        } else {
-            message.reply(" Necesitas unirte a un canal de voz!");
-        }
-    } else if (mess.startsWith(prefix + "skip")) {
-            guilds[message.guild.id].skippers.push(message.author.id);
-            guilds[message.guild.id].skipReq++;
-            skip_song(message);
-            message.reply(" La canción ha sido saltada!");
-    } else if (mess.startsWith(prefix + "cola")) {
-        var message2 = "```css\n";
-        for (var i = 0; i < guilds[message.guild.id].queueNames.length; i++) {
-            var temp = (i + 1) + ": " + (i === 0 ? "🔊 " : "") + guilds[message.guild.id].queueNames[i] + "\n";
-            if ((message2 + temp).length <= 2000 - 3) {
-                message2 += temp;
+        if (mess.startsWith(prefix + "play")) {
+            if (message.member.voiceChannel) {
+                if(mess === (prefix + "play")){
+                    message.reply("No escribiste el nombre de ninguna canción.");
+                }		
+                else{
+                    if (guilds[message.guild.id].queue.length > 0 || guilds[message.guild.id].isPlaying) {
+                        getID(args, function(id) {
+                            add_to_queue(id, message);
+                            fetchVideoInfo(id, function(err, videoInfo) {
+                                if (err) throw new Error(err);
+                                message.reply("📢 Has añadido una canción a la cola: ```🎵: " + videoInfo.title + "\n⏲️: [" + duracion(videoInfo.duration) +  "]\n📽️: " + videoInfo.url + "```");
+                                guilds[message.guild.id].queueNames.push(videoInfo.title + ", ⏲️: [" + duracion(videoInfo.duration) + "]");
+                            });
+                        });
+                    } else {
+                        isPlaying = true;
+                        getID(args, function(id) {
+                            guilds[message.guild.id].queue.push(id);
+                            fetchVideoInfo(id, function(err, videoInfo) {
+                                if (err) throw new Error(err);
+                                guilds[message.guild.id].queueNames.push(videoInfo.title + ", ⏱️: [" + duracion(videoInfo.duration) + "]");
+                            });
+                            playMusic(id, message);
+                        });
+                    }
+                }
             } else {
-                message2 += "```";
-                message.channel.send(message2);
-                message2 = "```";
+                message.reply(" Necesitas unirte a un canal de voz!");
+            }
+        } else if (mess.startsWith(prefix + "skip")) {
+                guilds[message.guild.id].skippers.push(message.author.id);
+                guilds[message.guild.id].skipReq++;
+                skip_song(message);
+                message.reply(" La canción ha sido saltada!");
+        } else if (mess.startsWith(prefix + "cola")) {
+            var message2 = "```css\n";
+            for (var i = 0; i < guilds[message.guild.id].queueNames.length; i++) {
+                var temp = (i + 1) + ": " + (i === 0 ? "🔊 " : "") + guilds[message.guild.id].queueNames[i] + "\n";
+                if ((message2 + temp).length <= 2000 - 3) {
+                    message2 += temp;
+                } else {
+                    message2 += "```";
+                    message.channel.send(message2);
+                    message2 = "```";
+                }
+            }
+            message2 += "```";
+            message.channel.send(message2);
+        }
+        else if (mess.startsWith(prefix + "reparar")) {
+            if(guilds[message.guild.id].voiceChannel != null){
+                guilds[message.guild.id].voiceChannel.leave();
+                sleep(100);
+                guilds[message.guild.id].voiceChannel.join();
+                client.user.setPresence({
+                    game: {
+                    name: "",
+                    type: 0
+                    }
+                });
             }
         }
-        message2 += "```";
-        message.channel.send(message2);
+        else if (mess.startsWith(prefix + "salir")) {
+            if(guilds[message.guild.id].voiceChannel != null){
+                guilds[message.guild.id].voiceChannel.join();
+                sleep(100);
+                guilds[message.guild.id].voiceChannel.leave();
+                guilds[message.guild.id].queue = [];
+                client.user.setPresence({
+                    game: {
+                    name: "",
+                    type: 0
+                    }
+                });
+            }
+        }
+        else if (mess.startsWith(prefix + "comandos")) {
+            message.channel.send(	"📜 Lista de comandos:\n"+
+                                    "```xl\n"+
+                                    "'y!play' Reproducir una canción o añadirla a la cola.\n"+
+                                    "'y!cola' Ver lista de canciones en cola.\n"+
+                                    "'y!skip' Saltar la canción que se está reproduciendo.\n"+
+                                    "'y!reparar' Reparar el bot por si no quiere reproducir las canciones (Se eliminarán todas las canciones en la cola).\n"+
+                                    "'y!salir' Sacar el bot del chat de voz por si no se sale automáticamente."+"```");
+        }
     }
-	else if (mess.startsWith(prefix + "reparar")) {
-		if(guilds[message.guild.id].voiceChannel != null){
-			guilds[message.guild.id].voiceChannel.leave();
-			sleep(100);
-			guilds[message.guild.id].voiceChannel.join();
-			client.user.setPresence({
-				game: {
-				name: "",
-				type: 0
-				}
-			});
-		}
-	}
-	else if (mess.startsWith(prefix + "salir")) {
-		if(guilds[message.guild.id].voiceChannel != null){
-			guilds[message.guild.id].voiceChannel.join();
-			sleep(100);
-			guilds[message.guild.id].voiceChannel.leave();
-			guilds[message.guild.id].queue = [];
-			client.user.setPresence({
-				game: {
-				name: "",
-				type: 0
-				}
-			});
-		}
-	}
-	else if (mess.startsWith(prefix + "comandos")) {
-		message.channel.send(	"📜 Lista de comandos:\n"+
-								"```xl\n"+
-								"'y!play' Reproducir una canción o añadirla a la cola.\n"+
-								"'y!cola' Ver lista de canciones en cola.\n"+
-								"'y!skip' Saltar la canción que se está reproduciendo.\n"+
-								"'y!reparar' Reparar el bot por si no quiere reproducir las canciones (Se eliminarán todas las canciones en la cola).\n"+
-								"'y!salir' Sacar el bot del chat de voz por si no se sale automáticamente."+"```");
+    else{
+        console.log("El bot ha recibido un mensaje privado ("+ message.channel.type +"): ");
+        console.log(message.author.tag+": "+mess);
     }
 });
 
