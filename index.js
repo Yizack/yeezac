@@ -139,7 +139,7 @@ function playMusic(id, message) {
         if (err) throw new Error(err);
 		console.log("ID: "+id);
 		message.channel.send("🔊 Se está reproduciendo:```fix\n🎵: " + videoInfo.title + "\n⏲️: [" + duracion(videoInfo.duration) +  "]\n📽️: " + videoInfo.url + "```");
-		console.log(message.author.username + " está reproduciendo: " + videoInfo.title);
+		console.log(message.author.tag + " está reproduciendo: " + videoInfo.title);
 		client.user.setPresence({
 			game: {
             name: videoInfo.title,
