@@ -87,12 +87,6 @@ client.on('message', function(message) {
                 guilds[message.guild.id].voiceChannel.leave();
                 sleep(100);
                 guilds[message.guild.id].voiceChannel.join();
-                client.user.setPresence({
-                    game: {
-                    name: "",
-                    type: 0
-                    }
-                });
             }
         }
         else if (mess.startsWith(prefix + "salir")) {
@@ -101,12 +95,6 @@ client.on('message', function(message) {
                 sleep(100);
                 guilds[message.guild.id].voiceChannel.leave();
                 guilds[message.guild.id].queue = [];
-                client.user.setPresence({
-                    game: {
-                    name: "",
-                    type: 0
-                    }
-                });
             }
         }
         else if (mess.startsWith(prefix + "comandos")) {
@@ -128,6 +116,12 @@ client.on('message', function(message) {
 
 client.on('ready', function() {
     console.log("Estoy listo!");
+	client.user.setPresence({
+        game: {
+        name: "yeezac.herokuapp.com",
+        type: 0
+        }
+    });
 });
 
 function skip_song(message) {
@@ -140,12 +134,6 @@ function playMusic(id, message) {
 		console.log("ID: "+id);
 		message.channel.send("🔊 Se está reproduciendo:```fix\n🎵: " + videoInfo.title + "\n⏲️: [" + duracion(videoInfo.duration) +  "]\n📽️: " + videoInfo.url + "```");
 		console.log(message.author.tag + " está reproduciendo: " + videoInfo.title);
-		client.user.setPresence({
-			game: {
-            name: videoInfo.title,
-            type: 0
-			}
-		});
     });
     guilds[message.guild.id].voiceChannel = message.member.voiceChannel;
     guilds[message.guild.id].voiceChannel.join().then(connection => {
@@ -164,13 +152,7 @@ function playMusic(id, message) {
                 guilds[message.guild.id].queue = [];
                 guilds[message.guild.id].queueNames = [];
                 guilds[message.guild.id].isPlaying = false;
-				guilds[message.guild.id].voiceChannel.leave()
-				client.user.setPresence({
-					game: {
-                    name: "",
-                    type: 0
-					}
-				});
+				guilds[message.guild.id].voiceChannel.leave();
             } else {
                 setTimeout(function() {
                     playMusic(guilds[message.guild.id].queue[0], message);
