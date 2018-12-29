@@ -17,9 +17,9 @@ client.login(discord_token);
 
 client.on('message', function(message) {
     const member = message.member;
-    const mess = message.content.toLowerCase();
     const args = message.content.split(' ').slice(1).join(" ");
 	if(message.channel.type !== "dm"){
+		const mess = message.content.toLowerCase();
 		if (!guilds[message.guild.id]) {
 			guilds[message.guild.id] = {
 				queue: [],
@@ -120,6 +120,7 @@ client.on('message', function(message) {
         }
     }
     else{
+		const mess = message.content;
         console.log("El bot ha recibido un mensaje privado ("+ message.channel.type +"): ");
         console.log(message.author.tag+": "+mess);
     }
