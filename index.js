@@ -118,7 +118,7 @@ client.on('ready', function() {
     console.log("Estoy listo!");
 	client.user.setPresence({
         game: {
-        name: "yeezac.herokuapp.com",
+        name: "yeezac.yizack.com",
         type: 0
         }
     });
