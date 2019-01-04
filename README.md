@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/Yizack/yeezac.svg?branch=master)](https://travis-ci.org/Yizack/yeezac)
+[![dependencies Status](https://david-dm.org/yizack/yeezac/status.svg)](https://david-dm.org/yizack/yeezac)
 # Yeezac
 Bot de música para Discord con Node.js
 
