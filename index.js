@@ -18,16 +18,16 @@ client.login(discord_token);
 
 client.on('message', function(message) {
     const args = message.content.split(' ').slice(1).join(" ");
-	if(message.channel.type !== "dm"){
-		const mess = message.content.toLowerCase();
-		if (!guilds[message.guild.id]) {
-			guilds[message.guild.id] = {
-				queue: [],
-				queueNames: [],
-				isPlaying: false,
-				dispatcher: null,
+    if(message.channel.type !== "dm"){
+        const mess = message.content.toLowerCase();
+        if (!guilds[message.guild.id]) {
+            guilds[message.guild.id] = {
+                queue: [],
+                queueNames: [],
+                isPlaying: false,
+                dispatcher: null,
                 voiceChannel: null,
-			};
+            };
         }
         if (mess.startsWith(prefix + "play")) {
             if (message.member.voiceChannel) {
