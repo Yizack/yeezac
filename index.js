@@ -10,13 +10,13 @@ const yt_api_key = config.yt_api_key;
 const prefix = config.prefix;
 const discord_token = config.discord_token;
 const botid = config.botid;
+const ownerid = config.ownerid;
 
 var guilds = {};
 
 client.login(discord_token);
 
 client.on('message', function(message) {
-    const member = message.member;
     const args = message.content.split(' ').slice(1).join(" ");
 	if(message.channel.type !== "dm"){
 		const mess = message.content.toLowerCase();
@@ -26,28 +26,25 @@ client.on('message', function(message) {
 				queueNames: [],
 				isPlaying: false,
 				dispatcher: null,
-				voiceChannel: null,
-				skipReq: 0,
-				skippers: [],
+                voiceChannel: null,
 			};
-		}
-
+        }
         if (mess.startsWith(prefix + "play")) {
             if (message.member.voiceChannel) {
-                if(mess === (prefix + "play")){
-                    message.reply("No escribiste el nombre de ninguna canción.");
-                }		
-                else{
+                if (mess === (prefix + "play"))
+                    message.reply("No escribiste el nombre de ninguna canción.");		
+                else {
                     if (guilds[message.guild.id].queue.length > 0 || guilds[message.guild.id].isPlaying) {
                         getID(args, function(id) {
-                            add_to_queue(id, message);
+                            agregar_a_cola(id, message);
                             fetchVideoInfo(id, function(err, videoInfo) {
                                 if (err) throw new Error(err);
                                 message.reply("📢 Has añadido una canción a la cola: ```🎵: " + videoInfo.title + "\n⏲️: [" + duracion(videoInfo.duration) +  "]\n📽️: " + videoInfo.url + "```");
                                 guilds[message.guild.id].queueNames.push(videoInfo.title + ", ⏲️: [" + duracion(videoInfo.duration) + "]");
                             });
                         });
-                    } else {
+                    }
+                    else {
                         isPlaying = true;
                         getID(args, function(id) {
                             guilds[message.guild.id].queue.push(id);
@@ -59,21 +56,23 @@ client.on('message', function(message) {
                         });
                     }
                 }
-            } else {
-                message.reply(" Necesitas unirte a un canal de voz!");
             }
-        } else if (mess.startsWith(prefix + "skip")) {
-                guilds[message.guild.id].skippers.push(message.author.id);
-                guilds[message.guild.id].skipReq++;
-                skip_song(message);
+            else
+                message.reply(" Necesitas unirte a un canal de voz!");
+        }
+        else if (mess.startsWith(prefix + "skip")) {
+            if(guilds[message.guild.id].dispatcher !== null){
+                guilds[message.guild.id].dispatcher.end();
                 message.reply(" La canción ha sido saltada!");
-        } else if (mess.startsWith(prefix + "cola")) {
+            }
+        }
+        else if (mess.startsWith(prefix + "cola")) {
             var message2 = "```css\n";
             for (var i = 0; i < guilds[message.guild.id].queueNames.length; i++) {
                 var temp = (i + 1) + ": " + (i === 0 ? "🔊 " : "") + guilds[message.guild.id].queueNames[i] + "\n";
-                if ((message2 + temp).length <= 2000 - 3) {
+                if ((message2 + temp).length <= 2000 - 3)
                     message2 += temp;
-                } else {
+                else {
                     message2 += "```";
                     message.channel.send(message2);
                     message2 = "```";
@@ -83,14 +82,14 @@ client.on('message', function(message) {
             message.channel.send(message2);
         }
         else if (mess.startsWith(prefix + "reparar")) {
-            if(guilds[message.guild.id].voiceChannel != null){
+            if(guilds[message.guild.id].voiceChannel != null) {
                 guilds[message.guild.id].voiceChannel.leave();
                 sleep(100);
                 guilds[message.guild.id].voiceChannel.join();
             }
         }
         else if (mess.startsWith(prefix + "salir")) {
-            if(guilds[message.guild.id].voiceChannel != null){
+            if(guilds[message.guild.id].voiceChannel != null) {
                 guilds[message.guild.id].voiceChannel.join();
                 sleep(100);
                 guilds[message.guild.id].voiceChannel.leave();
@@ -98,35 +97,53 @@ client.on('message', function(message) {
             }
         }
         else if (mess.startsWith(prefix + "comandos")) {
-            message.channel.send(	"📜 Lista de comandos:\n"+
-                                    "```xl\n"+
-                                    "'y!play' Reproducir una canción o añadirla a la cola.\n"+
-                                    "'y!cola' Ver lista de canciones en cola.\n"+
-                                    "'y!skip' Saltar la canción que se está reproduciendo.\n"+
-                                    "'y!reparar' Reparar el bot por si no quiere reproducir las canciones (Se eliminarán todas las canciones en la cola).\n"+
-                                    "'y!salir' Sacar el bot del chat de voz por si no se sale automáticamente."+"```");
+            message.channel.send(
+                "📜 Lista de comandos:\n"+
+                "```xl\n"+
+                "'y!play' Reproducir una canción o añadirla a la cola.\n"+
+                "'y!cola' Ver lista de canciones en cola.\n"+
+                "'y!skip' Saltar la canción que se está reproduciendo.\n"+
+                "'y!reparar' Reparar el bot por si no quiere reproducir las canciones (Se eliminarán todas las canciones en la cola).\n"+
+                "'y!salir' Sacar el bot del chat de voz por si no se sale automáticamente."+
+                "```"
+            );
+        }
+        else if (mess.startsWith(prefix + "servidores")) {
+            var contar_servidores;
+            switch(client.guilds.size) {
+                case 1:
+                    contar_servidores = "He sido invitado a " + client.guilds.size + " servidor.";
+                    message.channel.send(contar_servidores);
+                    break;
+                default:
+                    contar_servidores = "Me han invitado a " + client.guilds.size + " servidores.";
+                    message.channel.send(contar_servidores);
+                    break;
+            }
+            console.log(contar_servidores);
         }
     }
-    else{
-		const mess = message.content;
-        console.log("El bot ha recibido un mensaje privado ("+ message.channel.type +"): ");
-        console.log(message.author.tag+": "+mess);
+    else {
+        const mess = message.content;
+        if(message.author.id !== botid){
+            console.log("El bot ha recibido un mensaje privado ("+ message.channel.type +"): ");
+            console.log(message.author.tag+": "+mess);
+            client.fetchUser(ownerid).then((user) => {
+                user.send(message.author.tag+": "+mess);
+            });
+        }
     }
 });
 
 client.on('ready', function() {
     console.log("Estoy listo!");
-	client.user.setPresence({
+    client.user.setPresence({
         game: {
-        name: "yeezac.yizack.com",
-        type: 0
+            name: "yeezac.yizack.com",
+            type: 0
         }
     });
 });
-
-function skip_song(message) {
-    guilds[message.guild.id].dispatcher.end();
-}
 
 function playMusic(id, message) {
 	fetchVideoInfo(id, function(err, videoInfo) {
@@ -140,12 +157,8 @@ function playMusic(id, message) {
         const stream = ytdl("https://www.youtube.com/watch?v=" + id, {
             filter: "audioonly"
         });
-        guilds[message.guild.id].skipReq = 0;
-        guilds[message.guild.id].skippers = [];
         guilds[message.guild.id].dispatcher = connection.playStream(stream);
         guilds[message.guild.id].dispatcher.on('end', function() {
-            guilds[message.guild.id].skipReq = 0;
-            guilds[message.guild.id].skippers = [];
             guilds[message.guild.id].queue.shift();
             guilds[message.guild.id].queueNames.shift();
             if (guilds[message.guild.id].queue.length === 0) {
@@ -153,40 +166,40 @@ function playMusic(id, message) {
                 guilds[message.guild.id].queueNames = [];
                 guilds[message.guild.id].isPlaying = false;
 				guilds[message.guild.id].voiceChannel.leave();
-            } else {
+            }
+            else {
                 setTimeout(function() {
                     playMusic(guilds[message.guild.id].queue[0], message);
                 }, 500);
             }
         });
-    }).catch(err => console.log(err));;
+    }).catch(err => console.log(err));
 }
 
 function getID(str, cb) {
-    if (isYoutube(str)) {
+    if (isYoutube(str))
         cb(getYouTubeID(str));
-    } else {
+    else {
         search_video(str, function(id) {
             cb(id);
         });
     }
 }
 
-function add_to_queue(strID, message) {
-    if (isYoutube(strID)) {
+function agregar_a_cola(strID, message) {
+    if (isYoutube(strID))
         guilds[message.guild.id].queue.push(getYouTubeID(strID));
-    } else {
+    else
         guilds[message.guild.id].queue.push(strID);
-    }
 }
 
 function search_video(query, callback) {
     request("https://www.googleapis.com/youtube/v3/search?part=id&type=video&q=" + encodeURIComponent(query) + "&key=" + yt_api_key, function(error, response, body) {
         var json = JSON.parse(body);
-        if (!json.items[0]) callback("3_-a9nVZYjk");
-        else {
+        if (!json.items[0])
+            callback("3_-a9nVZYjk");
+        else
             callback(json.items[0].id.videoId);
-        }
     });
 }
 
