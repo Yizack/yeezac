@@ -6,6 +6,7 @@ Bot de música para Discord con Node.js
 ## Requerimientos Generales
 - Crear [Discord Bot](https://discordapp.com/developers/applications/)
 - Habilitar [Youtube API](https://console.developers.google.com/)
+- Crear [SoundCloud APP](https://soundcloud.com/you/apps)(No disponible, ver:  [SoundCloud  Developers](https://developers.soundcloud.com/))
 
 ### Configuración General
 - Invita el bot a tu servidor de Discord accediendo en\
@@ -16,6 +17,8 @@ Reemplaza `XXXXXXXXXXXXXXXXXX` por el **Client ID** del Discord Bot.
   - `botid` Reemplazar `id del bot` con el id del Discord Bot.
   - `prefix` Reemplazar `y!` con el prefijo que desees para ejecutar un comando en Discord.
   - `yt_api_key` Reemplazar `api key de youtube` con la api key de Youtube.
+  - `ownerid` Reemplazar `tu discord id` con tu Discord ID.
+  - `sc_clientid` Reemplazar `tu soundcloud client id` con tu Client ID de la app de tu SoundCloud.
 ##
 
 ## Opción 1. Instalar en una PC local (Windows)
@@ -58,11 +61,12 @@ Reemplaza `XXXXXXXXXXXXXXXXXX` por el **Client ID** del Discord Bot.
 ## Uso
 | Comando | Descripción
 |---------|-------------|
-| `y!play` | Reproduce una canción de Youtube. |
-| `y!cola` | Muestra las canciones que están en cola de reproducción. |
-| `y!skip` | Salta la canción que se está reproduciendo. |
-| `y!comandos` | Muestra la lista de comandos. |
+| `y!play` | Reproduce una canción de Youtube o SoundCloud. |
+| `y!cola` | Canciones que están en cola de reproducción. |
+| `y!skip` | Saltar la canción que se está reproduciendo. |
 | `y!salir` | El Discord Bot sale de el canal de voz. |
+| `y!servidores` | Cantidad de servidores que ha sido invitado el bot. |
+| `y!comandos` | Lista de comandos. |
 ##
 
 ## Sugerencias, preguntas o problemas
