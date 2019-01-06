@@ -3,6 +3,6 @@
   "botid": "id del bot",
   "prefix": "y!",
   "yt_api_key": "api key de youtube",
-  "ownerid": "tu discord id"
+  "ownerid": "tu discord id",
   "sc_clientid": "tu soundcloud client id"
 }
