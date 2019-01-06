@@ -6,7 +6,7 @@ Bot de música para Discord con Node.js
 ## Requerimientos Generales
 - Crear [Discord Bot](https://discordapp.com/developers/applications/)
 - Habilitar [Youtube API](https://console.developers.google.com/)
-- Crear [SoundCloud APP](https://soundcloud.com/you/apps)(No disponible, ver:  [SoundCloud  Developers](https://developers.soundcloud.com/))
+- Crear [SoundCloud APP](https://soundcloud.com/you/apps) (No disponible, ver:  [SoundCloud  Developers](https://developers.soundcloud.com/))
 
 ### Configuración General
 - Invita el bot a tu servidor de Discord accediendo en\
