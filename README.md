@@ -15,7 +15,7 @@ Reemplaza `XXXXXXXXXXXXXXXXXX` por el **Client ID** del Discord Bot.
 - Editar `config.json`
   - `discord_token` Reemplazar `bot token` con el token del Discord Bot.
   - `botid` Reemplazar `id del bot` con el id del Discord Bot.
-  - `prefix` Reemplazar `y!` con el prefijo que desees para ejecutar un comando en Discord.
+  - `prefix` Reemplazar `y!` con el prefijo que desees utilizar para tu Discord Bot.
   - `yt_api_key` Reemplazar `api key de youtube` con la api key de Youtube.
   - `ownerid` Reemplazar `tu discord id` con tu Discord ID.
   - `sc_clientid` Reemplazar `tu soundcloud client id` con tu Client ID de la app de tu SoundCloud.
@@ -29,8 +29,8 @@ Reemplaza `XXXXXXXXXXXXXXXXXX` por el **Client ID** del Discord Bot.
 - Abrir `cmd.exe` en Windows.
 - Ejecutar `cd\` para ir a la raíz del disco local.
 - Ejecutar para ir al directorio donde están los archivos del Discord Bot. Ejemplo `cd %USERPROFILE%\Documents\DiscordBot`
-- Ejecutar `npm install --save` para instalar dependencies.
-- Ejecutar `npm install ffmpeg-binaries --save` para instalar la librería ffmpeg.
+- Ejecutar `npm install` para instalar dependencies.
+- Ejecutar `npm install ffmpeg-binaries` para instalar la librería ffmpeg.
 - Ejecutar `node index.js` para activar el Discord Bot.
 ##
 
