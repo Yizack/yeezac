@@ -39,10 +39,16 @@ client.on('message', function(message) {
                         message.reply("No escribiste el nombre de ninguna canción.");		
                     else {
                         const args = message.content.split(/(?:<|(?:>| ))+/).slice(1).join(" "); // Remover comando, espacios y <> del mensaje
-                        if(isSoundcloud(args))
-                            Soundcloud(args, message);
-                        else
-                            Youtube(args, message);
+                        if(isURL(args)){  // Si la búsqueda contiene un link
+                            if(isSoundcloud(args)) // Si lee un link de soundcloud
+                                Soundcloud(args, message); // Soundcloud
+                            else if (isYoutube(args)) // Si lee un link de youtube
+                                Youtube(args, message); // Youtube
+                            else
+                                message.reply("No se encontro ningúna canción con ese link.");
+                        }
+                        else // Si no
+                            buscar_video(args, message); // Buscar video en el buscador de youtube
                     }
                 }
                 else
@@ -131,31 +137,22 @@ client.on('ready', function() {
 
 // Youtube
 function Youtube(args, message) {
-    getID(args, function(id) {
-        fetchVideoInfo(id, function(err, videoInfo) {
-            if (err) throw new Error(err);
-            var titulo = videoInfo.title;
-            var duracion = tiempo(videoInfo.duration);
-            var url = videoInfo.url;
-            if(guilds[message.guild.id].queue.length > 0) { // Si la cola es mayor a 0
-                if(guilds[message.guild.id].queue.indexOf(id) > -1 ) // Si ya existe el id de la canción
-                    message.reply("Esa canción ya está en cola, espera a que acabe para escucharla otra vez.");
-                else
-                    agregar_a_cola(message, id, url, titulo, duracion); // Agrgar canción a la cola
-            }
-            else { // Si no hay canciones
-                Push(message, id, url, titulo, duracion); // Push canción
-                playMusic(message, id, url, titulo, duracion); // Reproducir canción
-            }
-        });
-    });
+    var id = getYouTubeID(args);
+    if(!id) {
+        if(args.indexOf("playlist") > -1)
+            message.reply("Se encontró más de una canción. No están permitidas las playlist.");
+        else
+            message.reply("No se encontro ningúna canción con ese link.");
+    }
+    else
+        reproducirYoutube(id, message);
 }
 
 // Soundcloud
 async function Soundcloud(args, message) {
     let respuesta = await doRequest("http://api.soundcloud.com/resolve.json?url=" + args + "&client_id=" + sc_clientid);
     if(respuesta != null){
-        json = JSON.parse(respuesta);
+        var json = JSON.parse(respuesta);
         if(json.tracks)
             message.reply("Se encontró más de una canción. No están permitidas las playlist.");
         else if (json.id) {
@@ -164,7 +161,7 @@ async function Soundcloud(args, message) {
             var id = json.id;
             var url = json.permalink_url;
             if(guilds[message.guild.id].queue.length > 0) { // Si la cola es mayor a 0
-                if(guilds[message.guild.id].queue.indexOf(id) > -1 ) // Si ya existe el id de la canción
+                if(guilds[message.guild.id].queue.indexOf(id) > -1) // Si ya existe el id de la canción
                     message.reply("Esa canción ya está en cola, espera a que acabe para escucharla otra vez.");
                 else
                     agregar_a_cola(message, id, url, titulo, duracion); // Agrgar canción a la cola
@@ -181,6 +178,40 @@ async function Soundcloud(args, message) {
         message.reply("No se encontro ningúna canción con ese link.");
 }
 
+// Buscar video en youtube sin link y obtener el ID para reproducir
+async function buscar_video(args, message) {
+    let respuesta = await doRequest("https://www.googleapis.com/youtube/v3/search?part=id&type=video&q=" + encodeURIComponent(args) + "&key=" + yt_api_key);
+    var json = JSON.parse(respuesta);
+    if (!json.items[0])
+        message.reply("No se encontro ningúna canción.");
+    else {
+        let id = json.items[0].id.videoId;
+        reproducirYoutube(id, message);
+    }
+}
+
+function reproducirYoutube(id, message){
+    fetchVideoInfo(id, function(err, videoInfo) {
+        if (err)
+            message.reply("No se encontro ningúna canción con ese link.");
+        else {
+            var titulo = videoInfo.title;
+            var duracion = tiempo(videoInfo.duration);
+            var url = videoInfo.url;
+            if(guilds[message.guild.id].queue.length > 0) { // Si la cola es mayor a 0
+                if(guilds[message.guild.id].queue.indexOf(id) > -1) // Si ya existe el id de la canción
+                    message.reply("Esa canción ya está en cola, espera a que acabe para escucharla otra vez.");
+                else
+                    agregar_a_cola(message, id, url, titulo, duracion); // Agrgar canción a la cola
+            }
+            else { // Si no hay canciones
+                Push(message, id, url, titulo, duracion); // Push canción
+                playMusic(message, id, url, titulo, duracion); // Reproducir canción
+            }
+        }
+    });
+}
+
 // Reproducir música de Soundcloud o Youtube
 function playMusic(message, id, url) {
     var stream;
@@ -193,17 +224,17 @@ function playMusic(message, id, url) {
 
 function play(stream, message){
     // Variables de la canción actual
-    const id = guilds[message.guild.id].queue[0]; 
-    const url = guilds[message.guild.id].url[0];
-    const titulo = guilds[message.guild.id].titulo[0];
-    const duracion = guilds[message.guild.id].duracion[0];
+    var id = guilds[message.guild.id].queue[0]; 
+    var url = guilds[message.guild.id].url[0];
+    var titulo = guilds[message.guild.id].titulo[0];
+    var duracion = guilds[message.guild.id].duracion[0];
     reproduciendo(id, url, titulo, duracion, message); // Mostrar canción que se está reproduciendo
     // Verificar canal de voz del usuario
     guilds[message.guild.id].voiceChannel = message.member.voiceChannel;
-    const canal = guilds[message.guild.id].voiceChannel;
+    var canal = guilds[message.guild.id].voiceChannel;
     canal.join().then(connection => {
         guilds[message.guild.id].dispatcher = connection.playStream(stream); // Stream canción
-        const dispatcher = guilds[message.guild.id].dispatcher;
+        var dispatcher = guilds[message.guild.id].dispatcher;
         dispatcher.on('end', function() { // Cuando se acaba la canción
             Shift(message); // Liberar datos de la canción y pasar la siguiente a la posición 0
             if (guilds[message.guild.id].queue.length === 0) { // Si no hay más canciones en la cola
@@ -211,35 +242,13 @@ function play(stream, message){
             }
             else { // Si hay más canciones
                 setTimeout(function() {
-                    const id = guilds[message.guild.id].queue[0]; // Obtener id
-                    const url = guilds[message.guild.id].url[0]; // Obtener url
+                    id = guilds[message.guild.id].queue[0]; // Obtener id
+                    url = guilds[message.guild.id].url[0]; // Obtener url
                     playMusic(message, id, url); // Reproducir música de Soundcloud o Youtube
                 }, 500);
             }
         });
     }).catch(err => console.log(err));
-}
-
-// Obtener ID de un video de Youtube
-function getID(str, cb) {
-    if (isYoutube(str))
-        cb(getYouTubeID(str));
-    else {
-        search_video(str, function(id) {
-            cb(id);
-        });
-    }
-}
-
-// Buscar video en youtube sin link y obtener el ID
-function search_video(query, callback) {
-    request("https://www.googleapis.com/youtube/v3/search?part=id&type=video&q=" + encodeURIComponent(query) + "&key=" + yt_api_key, function(error, response, body) {
-        var json = JSON.parse(body);
-        if (!json.items[0])
-            callback("3_-a9nVZYjk");
-        else
-            callback(json.items[0].id.videoId);
-    });
 }
 
 // Envía la canción que se está reproduciendo
@@ -319,4 +328,15 @@ function Push(message, id, url, titulo, duracion) {
     guilds[message.guild.id].url.push(url);
     guilds[message.guild.id].titulo.push(titulo);
     guilds[message.guild.id].duracion.push(duracion);
+}
+
+// Verificar si es un link
+function isURL(args) {
+    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
+    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return pattern.test(args);
 }
