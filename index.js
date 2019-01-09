@@ -139,6 +139,10 @@ client.on('error', function() {
     console.error("Ha ocurrido un error");
 });
 
+client.on('resume', function() {
+    console.log("Estoy listo otra vez!");
+});
+
 // Youtube
 function Youtube(args, message) {
     var id = getYouTubeID(args);
@@ -248,6 +252,10 @@ function play(stream, message){
                     playMusic(message, id, url); // Reproducir música de Soundcloud o Youtube
                 }, 500);
             }
+        });
+        connection.on('error', function() {
+            console.error("Se ha perdido la conexión");
+            process.exit(1);
         });
     }).catch(err => console.log(err));
 }
