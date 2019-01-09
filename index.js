@@ -135,6 +135,10 @@ client.on('ready', function() {
     });
 });
 
+client.on('error', function() {
+    console.error("Ha ocurrido un error");
+});
+
 // Youtube
 function Youtube(args, message) {
     var id = getYouTubeID(args);
@@ -231,15 +235,12 @@ function play(stream, message){
     reproduciendo(id, url, titulo, duracion, message); // Mostrar canción que se está reproduciendo
     // Verificar canal de voz del usuario
     guilds[message.guild.id].voiceChannel = message.member.voiceChannel;
-    var canal = guilds[message.guild.id].voiceChannel;
-    canal.join().then(connection => {
+    guilds[message.guild.id].voiceChannel.join().then(connection => {
         guilds[message.guild.id].dispatcher = connection.playStream(stream); // Stream canción
-        var dispatcher = guilds[message.guild.id].dispatcher;
-        dispatcher.on('end', function() { // Cuando se acaba la canción
+        guilds[message.guild.id].dispatcher.on('end', function() { // Cuando se acaba la canción
             Shift(message); // Liberar datos de la canción y pasar la siguiente a la posición 0
-            if (guilds[message.guild.id].queue.length === 0) { // Si no hay más canciones en la cola
+            if (guilds[message.guild.id].queue.length === 0) // Si no hay más canciones en la cola
                 Salir(message); // Salir del canal
-            }
             else { // Si hay más canciones
                 setTimeout(function() {
                     id = guilds[message.guild.id].queue[0]; // Obtener id
