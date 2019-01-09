@@ -30,6 +30,7 @@ client.on('message', function(message) {
                 duracion: [],
                 dispatcher: null,
                 voiceChannel: null,
+                isPlaying: false,
             };
         }
         switch(comando) {
@@ -56,9 +57,9 @@ client.on('message', function(message) {
                 break;   
 
             case "skip":
-                if(guilds[message.guild.id].queue[0] !== undefined){
+                if(guilds[message.guild.id].queue[0] !== undefined) {
+                    message.reply("La canción ha sido saltada!");
                     guilds[message.guild.id].dispatcher.end();
-                    message.reply(" La canción ha sido saltada!");
                 }
                 break;
 
@@ -79,7 +80,7 @@ client.on('message', function(message) {
                 break;
 
             case "salir":
-                if(guilds[message.guild.id].voiceChannel != null)
+                if(guilds[message.guild.id].voiceChannel !== null)
                     Salir(message);
                 break;
 
@@ -103,6 +104,8 @@ client.on('message', function(message) {
                     "📜 Lista de comandos:\n"+
                     "```xl\n"+
                     "'y!play' Reproducir una canción o añadirla a la cola.\n"+
+                    "'y!pausa' Pausar la canción actual.\n"+
+                    "'y!resume' Resumir la canción pausada.\n"+
                     "'y!cola' Ver lista de canciones en cola.\n"+
                     "'y!skip' Saltar la canción que se está reproduciendo.\n"+
                     "'y!salir' Sacar el bot del chat de voz.\n"+
@@ -110,6 +113,24 @@ client.on('message', function(message) {
                     "'y!comandos' Mostrar los comandos que se pueden utilizar."+
                     "```"
                 );
+                break;
+
+            case "pausa":
+                if(guilds[message.guild.id].isPlaying === true) {
+                    message.reply("Has pausado la canción.");
+                    guilds[message.guild.id].dispatcher.pause();
+                    guilds[message.guild.id].isPlaying = false;
+                }
+                break;
+
+            case "resume":
+                if(guilds[message.guild.id].queue[0] !== undefined && guilds[message.guild.id].isPlaying === false) {
+                    setTimeout(function() {
+                        message.reply("La canción ha sido resumida.");
+                        guilds[message.guild.id].dispatcher.resume();
+                        guilds[message.guild.id].isPlaying = true;
+                    }, 500);
+                }
                 break;
         }
     }
@@ -240,6 +261,7 @@ function play(stream, message){
     // Verificar canal de voz del usuario
     guilds[message.guild.id].voiceChannel = message.member.voiceChannel;
     guilds[message.guild.id].voiceChannel.join().then(connection => {
+        guilds[message.guild.id].isPlaying = true;
         guilds[message.guild.id].dispatcher = connection.playStream(stream); // Stream canción
         guilds[message.guild.id].dispatcher.on('end', function() { // Cuando se acaba la canción
             Shift(message); // Liberar datos de la canción y pasar la siguiente a la posición 0
@@ -328,6 +350,7 @@ function Salir(message) {
     guilds[message.guild.id].titulo = [];
     guilds[message.guild.id].duracion = [];
     guilds[message.guild.id].voiceChannel.leave();
+    guilds[message.guild.id].isPlaying = false;
 }
 
 // Push canción (Agregar infromación de la canción)
