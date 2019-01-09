@@ -106,11 +106,11 @@ client.on('message', function(message) {
                     "'y!play' Reproducir una canción o añadirla a la cola.\n"+
                     "'y!pausa' Pausar la canción actual.\n"+
                     "'y!resume' Resumir la canción pausada.\n"+
-                    "'y!cola' Ver lista de canciones en cola.\n"+
-                    "'y!skip' Saltar la canción que se está reproduciendo.\n"+
-                    "'y!salir' Sacar el bot del chat de voz.\n"+
+                    "'y!cola' Ver lista de canciones que están en cola de reproducción.\n"+
+                    "'y!skip' Saltar canción que se está reproduciendo.\n"+
+                    "'y!salir' Sacar el bot del canal de voz.\n"+
                     "'y!servidores' Mostrar la cantidad de servidores que ha sido invitado el bot.\n"+
-                    "'y!comandos' Mostrar los comandos que se pueden utilizar."+
+                    "'y!comandos' Lista de comandos."+
                     "```"
                 );
                 break;
