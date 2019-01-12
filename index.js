@@ -39,9 +39,8 @@ client.on('message', function(message) {
                     if (mess === (prefix + "play"))
                         message.reply("No escribiste el nombre de ninguna canción.");		
                     else {
-                        const args = message.content.split(/(?:<|(?:>| ))+/).slice(1).join(" ").toLowerCase(); // Remover comando, espacios y <> del mensaje
-                        console.log(isURL(args));
-                        if(isURL(args)){  // Si la búsqueda contiene un link
+                        const args = message.content.split(/(?:<|(?:>| ))+/).slice(1).join(" "); // Remover comando, espacios y <> del mensaje
+                        if(isURL(args.toLowerCase())){  // Si la búsqueda contiene un link
                             if(isSoundcloud(args)) // Si lee un link de soundcloud
                                 Soundcloud(args, message); // Soundcloud
                             else if (isYoutube(args)) // Si lee un link de youtube
