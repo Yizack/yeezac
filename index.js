@@ -262,6 +262,7 @@ function play(stream, message){
     // Verificar canal de voz del usuario
     guilds[message.guild.id].voiceChannel = message.member.voiceChannel;
     guilds[message.guild.id].voiceChannel.join().then(connection => {
+        connection.setMaxListeners(0);
         guilds[message.guild.id].isPlaying = true;
         guilds[message.guild.id].dispatcher = connection.playStream(stream); // Stream canción
         guilds[message.guild.id].dispatcher.on('end', function() { // Cuando se acaba la canción
