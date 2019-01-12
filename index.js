@@ -39,7 +39,8 @@ client.on('message', function(message) {
                     if (mess === (prefix + "play"))
                         message.reply("No escribiste el nombre de ninguna canción.");		
                     else {
-                        const args = message.content.split(/(?:<|(?:>| ))+/).slice(1).join(" "); // Remover comando, espacios y <> del mensaje
+                        const args = message.content.split(/(?:<|(?:>| ))+/).slice(1).join(" ").toLowerCase(); // Remover comando, espacios y <> del mensaje
+                        console.log(isURL(args));
                         if(isURL(args)){  // Si la búsqueda contiene un link
                             if(isSoundcloud(args)) // Si lee un link de soundcloud
                                 Soundcloud(args, message); // Soundcloud
@@ -364,11 +365,9 @@ function Push(message, id, url, titulo, duracion) {
 
 // Verificar si es un link
 function isURL(args) {
-    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
-    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-    return pattern.test(args);
+    var url = args.match(/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/g);
+    if (url == null)
+        return false;
+    else
+        return true;
 }
