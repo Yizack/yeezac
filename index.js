@@ -298,7 +298,7 @@ function agregar_a_cola(message, id, url, titulo, duracion) {
 
 // Recibe argumentos del mensaje y retorna true si el mensaje recibido tiene un link de Youtube
 function isYoutube(args) {
-    return args.indexOf("youtube.com") > -1;
+    return args.indexOf("youtube.com") > -1 || args.indexOf("youtu.be") > -1;
 }
 
 // Recibe argumentos del mensaje y retorna true si el mensaje recibido tiene un link de Soundcloud
