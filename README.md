@@ -30,7 +30,7 @@ Reemplaza `XXXXXXXXXXXXXXXXXX` por el **Client ID** del Discord Bot.
 - Ejecutar `cd\` para ir a la raíz del disco local.
 - Ejecutar para ir al directorio donde están los archivos del Discord Bot. Ejemplo `cd %USERPROFILE%\Documents\DiscordBot`
 - Ejecutar `npm install` para instalar dependencies.
-- Ejecutar `npm install ffmpeg-binaries` para instalar la librería ffmpeg.
+- ~~Ejecutar `npm install ffmpeg-binaries` para instalar la librería ffmpeg.~~ * ffmpeg-binaries se ha quedado obsoleto y está fuera de mantenimiento por lo cual el bot no puede reproducir música, estaré investigando formas para lograr esto otra vez o esperar que la librería de discord.js actualize su librería de prism-media y soporte otras liberías ffmpeg como ffmpeg-static.
 - Ejecutar `node index.js` para activar el Discord Bot.
 ##
 
