@@ -20,7 +20,7 @@ client.login(discord_token);
 client.on('message', function(message) {
     if(message.channel.type !== "dm") {
         const mess = message.content.toLowerCase();
-        const comando = mess.split(/(?:y!| )+/).slice(0,2).join(""); // Extrae el comando
+        const comando = mess.split(" ")[0]; // Extrae el comando
         if (!guilds[message.guild.id]) {
             guilds[message.guild.id] = {
                 queue: [],
@@ -34,7 +34,7 @@ client.on('message', function(message) {
             };
         }
         switch(comando) {
-            case "play":
+            case prefix + "play":
                 if (message.member.voiceChannel) {
                     if (mess === (prefix + "play"))
                         message.reply("No escribiste el nombre de ninguna canción.");		
@@ -56,14 +56,14 @@ client.on('message', function(message) {
                     message.reply(" Necesitas unirte a un canal de voz!");
                 break;   
 
-            case "skip":
+            case prefix + "skip":
                 if(guilds[message.guild.id].queue[0] !== undefined) {
                     message.reply("La canción ha sido saltada!");
                     guilds[message.guild.id].dispatcher.end();
                 }
                 break;
 
-            case "cola":
+            case prefix + "cola":
                 var message2 = "```css\n";
                 for (var i = 0; i < guilds[message.guild.id].queueNames.length; i++) {
                     var temp = (i + 1) + ": " + (i === 0 ? "🔊 " : "") + guilds[message.guild.id].queueNames[i] + "\n";
@@ -79,12 +79,12 @@ client.on('message', function(message) {
                 message.channel.send(message2);
                 break;
 
-            case "salir":
+            case prefix + "salir":
                 if(guilds[message.guild.id].voiceChannel !== null)
                     Salir(message);
                 break;
 
-            case "servidores":
+            case prefix + "servidores":
                 var contar_servidores;
                 switch(client.guilds.size) {
                     case 1:
@@ -99,7 +99,7 @@ client.on('message', function(message) {
                 console.log(contar_servidores);
                 break;
 
-            case "comandos":
+            case prefix + "comandos":
                 message.channel.send(
                     "📜 Lista de comandos:\n"+
                     "```xl\n"+
@@ -115,7 +115,7 @@ client.on('message', function(message) {
                 );
                 break;
 
-            case "pausa":
+            case prefix + "pausa":
                 if(guilds[message.guild.id].isPlaying === true) {
                     message.reply("Has pausado la canción.");
                     guilds[message.guild.id].dispatcher.pause();
@@ -123,7 +123,7 @@ client.on('message', function(message) {
                 }
                 break;
 
-            case "resume":
+            case prefix +"resume":
                 if(guilds[message.guild.id].queue[0] !== undefined && guilds[message.guild.id].isPlaying === false) {
                     setTimeout(function() {
                         message.reply("La canción ha sido resumida.");
