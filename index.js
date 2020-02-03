@@ -245,7 +245,7 @@ function reproducirYoutube(id, message){
 function playMusic(message, id, url) {
     var stream;
     if(isYoutube(url))
-        stream = ytdl("https://www.youtube.com/watch?v=" + id, {filter: "audioonly"}); // Pasar stream de youtube
+        stream = ytdl("https://www.youtube.com/watch?v=" + id, {filter: 'audioandvideo', quality: "highestaudio", highWaterMark: 1<<25}); // Pasar stream de youtube
     else
         stream = "http://api.soundcloud.com/tracks/" + id + "/stream?consumer_key=" + sc_clientid; // Pasar stream de soundcloud
     play(stream, message); // Reproducir
