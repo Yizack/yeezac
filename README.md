@@ -31,6 +31,7 @@ Reemplaza `XXXXXXXXXXXXXXXXXX` por el **Client ID** del Discord Bot.
 - Ejecutar para ir al directorio donde están los archivos del Discord Bot. Ejemplo `cd %USERPROFILE%\Documents\DiscordBot`
 - Ejecutar `npm install` para instalar dependencies.
 - ~~Ejecutar `npm install ffmpeg-binaries` para instalar la librería ffmpeg.~~ * ffmpeg-binaries se ha quedado obsoleto y está fuera de mantenimiento por lo cual el bot no puede reproducir música, estaré investigando formas para lograr esto otra vez o esperar que la librería de discord.js actualize su librería de prism-media y soporte otras liberías ffmpeg como ffmpeg-static.
+- Debido a que discord.js aún no ha actualizado su librería de prism-media puedes solucionar el error editando el archivo `Ffmpeg.js` ubicado en `/node_modules/discord.js/node_modules/prism-media/src/transcoders/ffmpeg/` de la carpeta de tu bot, allí bajas hasta casi las últimas líneas del código y encontrarás una parte como `return require('ffmpeg-binaries');`, debes cambiar `ffmpeg-binaries` por `ffmpeg-static` y listo.
 - Ejecutar `node index.js` para activar el Discord Bot.
 ##
 
